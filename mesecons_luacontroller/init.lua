@@ -528,10 +528,11 @@ minetest.register_node(BASENAME .. "_burnt", {
 	selection_box = selectionbox,
 	node_box = nodebox,
 	on_construct = reset_meta,
-	on_receive_fields = function(pos, formname, fields)
+	on_receive_fields = function(pos, formname, fields, sender)
 		if fields.quit then
 			return
 		end
+		if minetest.is_protected(pos, sender:get_player_name()) then return end
 		reset(pos)
 		reset_meta(pos, fields.code)
 		local err = lc_update(pos, {type="program"})
