@@ -7,7 +7,7 @@ PISTON_MAXIMUM_PUSH = 15
 MOVESTONE_MAXIMUM_PUSH = 100
 MESECONS_RESUMETIME = 4		-- time to wait when starting the server before
 				-- processing the ActionQueue, don't set this too low
-OVERHEAT_MAX = 20		-- maximum heat of any component that directly sends an output
+OVERHEAT_MAX = 2000		-- maximum heat of any component that directly sends an output
 				-- signal when the input changes (e.g. luacontroller, gates)
 				-- Unit: actions per second, checks are every 1 second
 STACK_SIZE = 3000		-- Recursive functions will abort when this is reached. Therefore,

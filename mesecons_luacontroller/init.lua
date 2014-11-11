@@ -26,6 +26,9 @@ rules.b = {x =  0, y = 0, z =  1, name="B"}
 rules.c = {x =  1, y = 0, z =  0, name="C"}
 rules.d = {x =  0, y = 0, z = -1, name="D"}
 
+mesecons_luacontroller = {}
+mesecons_luacontroller.plugins = {}
+
 ------------------
 -- Action stuff --
 ------------------
@@ -171,7 +174,8 @@ end
 mesecon.queue:add_function("lc_interrupt", function (pos, iid, luac_id)
 	-- There is no luacontroller anymore / it has been reprogrammed / replaced
 	if (minetest.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
-	lc_update(pos, {type="interrupt", iid = iid})
+	err = lc_update(pos, {type="interrupt", iid = iid})
+        if err then minetest.log("info", "MESECONS: luacontroller error in interrupt:"..err) end
 end)
 
 local getinterrupt = function(pos)
@@ -199,7 +203,7 @@ local create_environment = function(pos, mem, event)
 	vports = {a = vports.a, b = vports.b, c = vports.c, d = vports.d}
 	local rports = get_real_portstates(pos)
 
-	return {
+	local env = {
 			print = safe_print,
 			pin = merge_portstates(vports, rports),
 			port = vports,
@@ -263,7 +267,13 @@ local create_environment = function(pos, mem, event)
 				sort = table.sort
 			},
 			event = event,
+
 	}
+        for k, v in pairs(mesecons_luacontroller.plugins) do
+            env[k] = v
+        end
+
+        return env
 end
 
 local create_sandbox = function (code, env)
@@ -385,7 +395,8 @@ local digiline = {
 	receptor = {},
 	effector = {
 		action = function (pos, node, channel, msg)
-			lc_update (pos, {type = "digiline", channel = channel, msg = msg})
+			err = lc_update (pos, {type = "digiline", channel = channel, msg = msg})
+                        if err then minetest.log("info", "MESECONS: luacontroller error in digiline receive:"..err) end
 		end
 	}
 }
