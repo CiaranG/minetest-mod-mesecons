@@ -289,6 +289,7 @@ end
 
 local lc_overheat = function (pos, meta)
 	if mesecon.do_overheat(pos) then -- if too hot
+                minetest.log("MESECONS:Burning out lua controller at "..minetest.pos_to_string(pos))
 		local node = minetest.get_node(pos)
 		minetest.swap_node(pos, {name = BASENAME.."_burnt", param2 = node.param2})
 		minetest.after(0.2, overheat_off, pos) -- wait for pending operations
